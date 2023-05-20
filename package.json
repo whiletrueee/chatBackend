@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npx nodemon"
+    "start": "node build/index.js",
+    "build": "tsc",
+    "lint": "eslint . --ext .ts",
+    "dev": "tsc-watch --onSuccess \"node ./build/index.js\""
   },
   "keywords": [],
   "author": "",
@@ -29,6 +32,7 @@
     "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.0",
     "mongodb": "^5.5.0",
+    "tsc-watch": "^6.0.4",
     "zod": "^3.21.4"
   }
 }

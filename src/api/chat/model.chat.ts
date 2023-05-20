@@ -6,7 +6,7 @@ export const validateChat = z.object({
   to: z.string().min(4),
 });
 
-export const validateChatHeader = z.object({
+export const validateAuthorization = z.object({
   authorization: z.string().min(1),
 });
 

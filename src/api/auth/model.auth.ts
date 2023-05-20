@@ -1,5 +1,4 @@
 import { z } from "zod";
-import bcrypt from "bcrypt";
 
 const email = z.string().email();
 const password = z.string().min(6);

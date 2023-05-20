@@ -8,7 +8,7 @@ import api from "../api";
 export default (app: express.Application) => {
   // Health Check endpoints
 
-  app.get("/healthcheck", (res: Response) => {
+  app.get("/healthcheck", (req, res: Response) => {
     const healthcheck = {
       uptime: process.uptime(),
       message: "OK",

@@ -1,7 +1,8 @@
 import { Request, Response, Router } from "express";
 import validate from "../../middlewares/validate";
 import { uploadChat } from "./service.chat";
-import { validateChat, validateChatHeader } from "./model.chat";
+import { validateChat, validateAuthorization } from "./model.chat";
+import authValidate from "../../middlewares/authValidate";
 const router = Router();
 
 const uploadChatController = async (req: Request, res: Response) => {
@@ -15,7 +16,8 @@ const uploadChatController = async (req: Request, res: Response) => {
 
 router.post(
   "/upload",
-  [validate(validateChat), validate(validateChatHeader)],
+  authValidate(validateAuthorization),
+  validate(validateChat),
   uploadChatController
 );
 

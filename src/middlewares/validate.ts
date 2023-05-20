@@ -8,8 +8,7 @@ const validate = (schema: any) => {
       next();
     } catch (err) {
       console.log("This is zod err");
-      res.status(400).send({ message: "Invalid data provide" });
-      return;
+      next(err);
     }
   };
 };

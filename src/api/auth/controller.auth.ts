@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import validatePayLoad from "../../middlewares/validate";
+import validate from "../../middlewares/validate";
 import { validateUserLogin, validateUserRegister } from "./model.auth";
 import { login, register } from "./service.auth";
 const router = Router();
@@ -22,11 +22,7 @@ const loginController = async (req: Request, res: Response) => {
   }
 };
 
-router.post(
-  "/register",
-  validatePayLoad(validateUserRegister),
-  registerController
-);
-router.post("/login", validatePayLoad(validateUserLogin), loginController);
+router.post("/register", validate(validateUserRegister), registerController);
+router.post("/login", validate(validateUserLogin), loginController);
 
 export default router;
