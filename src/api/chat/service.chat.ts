@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { getDB } from "../../../config/mongoDb";
+import { closeDB, getDB } from "../../config/mongoDb";
+import { close } from "fs";
 
 export const uploadChat = async (req: Request, res: Response) => {
   try {
