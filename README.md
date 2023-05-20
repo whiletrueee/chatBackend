@@ -16,7 +16,7 @@ A simple chat backend written in Node.js and Express.
 1. Install the dependencies:
 
 
-npm install
+pnpm install
 Code snippet
 
 2. Create a .env file in the project root and add the following environment variables:
