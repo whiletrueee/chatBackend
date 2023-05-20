@@ -14,7 +14,6 @@ const initDatabase = async () => {
   try {
     client = await MongoClient.connect(uri);
     db = client.db(DB_Name);
-    console.log("Successfully connected to MongoDB !");
 
     return;
   } catch (error) {

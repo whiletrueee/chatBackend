@@ -4,8 +4,8 @@ import Express from "express";
 
 export default async (expressApp: Express.Application): Promise<void> => {
   await getDB();
-  console.log("Database is connected");
+  console.log("✅ Database is connected ✅");
 
   express(expressApp);
-  console.log("Express is connected");
+  console.log("✅ Express is connected ✅");
 };
