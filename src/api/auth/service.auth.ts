@@ -1,6 +1,8 @@
+import config from "../../config";
 import { getDB } from "../../config/mongoDb";
 import { finalUserRegisterType, validateUserLoginType } from "./model.auth";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const register = async (body: finalUserRegisterType) => {
   const userData = body;
@@ -38,6 +40,21 @@ export const login = async (body: validateUserLoginType) => {
   if (!getProfile) {
     throw { message: "User not found", status: 404, success: false };
   }
+  const isPasswordValid = await bcrypt.compare(
+    body.password,
+    getProfile.password
+  );
+  if (!isPasswordValid) {
+    throw { message: "Password is incorrect", status: 401, success: false };
+  }
 
-  return { message: getProfile, status: 200, success: true };
+  const token = jwt.sign(
+    { email: getProfile.email, userId: getProfile.userId },
+    config.jwtSecret as string,
+    { expiresIn: "10d" }
+  );
+
+  await user.updateOne({ email: getProfile.email }, { $set: { token } });
+
+  return { message: "Login successful", status: 200, success: true, token };
 };

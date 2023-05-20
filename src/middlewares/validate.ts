@@ -1,17 +1,17 @@
 import { NextFunction, Request, Response } from "express";
 
-const validatePayLoad = (schema: any) => {
+const validate = (schema: any) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const chat = req.body;
     try {
       schema.parse(chat);
       next();
     } catch (err) {
-      console.log("This is zod err",err);
-      res.status(400).send({ message: "Invalid chat data" });
+      console.log("This is zod err");
+      res.status(400).send({ message: "Invalid data provide" });
       return;
     }
   };
 };
 
-export default validatePayLoad;
+export default validate;
