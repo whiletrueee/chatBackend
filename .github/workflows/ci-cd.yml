@@ -47,7 +47,7 @@ jobs:
           username: ${{ secrets.HOSTNAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           script: |
-            cd /home/ubuntu/chatbackend
+            cd /home/ubuntu/chatBackend
             git pull
             docker build -t chatbackend . &&
             docker run -d --name chatbackend_container chatbackend
