@@ -33,7 +33,7 @@ jobs:
           mkdir -p /home/runner/chatbackend/.ssh
           chmod 700 /home/runner/chatbackend/.ssh
           cd /home/runner/chatbackend/.ssh
-          echo $PRIVATE_KEY > test
+          echo "$PRIVATE_KEY" > id_rsa
           chmod 640 test
           echo "Host $HOSTNAME" > config
           echo "  AddKeysToAgent yes" >> config
@@ -44,11 +44,12 @@ jobs:
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.HOSTNAME }}
-          username: ${{ secrets.HOSTNAME }}
+          username: ${{ secrets.USER_NAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           script: |
             cd /home/ubuntu/chatBackend
             git pull
-            docker build -t chatbackend . &&
+            docker build -t chatbackend .
+            docker stop chatbackend_container || true
+            docker rm chatbackend_container || true
             docker run -d --name chatbackend_container chatbackend
-            exit
