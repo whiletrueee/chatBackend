@@ -23,23 +23,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup SSH
-        env:
-          PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
-          HOSTNAME: ${{ secrets.HOSTNAME }}
-          USER_NAME: ${{ secrets.USER_NAME }}
-
-        run: |
-          mkdir -p /home/runner/chatbackend/.ssh
-          chmod 700 /home/runner/chatbackend/.ssh
-          cd /home/runner/chatbackend/.ssh
-          echo "$PRIVATE_KEY" > id_rsa
-          chmod 640 id_rsa
-          echo "Host $HOSTNAME" > config
-          echo "  AddKeysToAgent yes" >> config
-          echo "  ForwardAgent yes" >> config
-          echo "  IdentityFile /home/runner/chatbackend/.ssh/test" >> config
-
       - name: Push to EC2
         uses: appleboy/ssh-action@v0.1.8
         with:
