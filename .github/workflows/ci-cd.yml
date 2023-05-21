@@ -40,3 +40,4 @@ jobs:
             git pull origin main &&
             docker build -t chatbackend . &&
             docker run -d --name chatbackend_container chatbackend
+            '
