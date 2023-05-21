@@ -9,7 +9,7 @@ A simple chat backend written in Node.js and Express.
 * Supports real-time chat between users
 * Stores chat messages in a MongoDB database
 * Uses CORS to allow cross-origin requests
-* Includes a development server with hot reload
+* Includes a development server with hot 
 
 ## Getting Started
 
