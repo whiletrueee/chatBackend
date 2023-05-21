@@ -31,6 +31,9 @@ dependencies:
   express:
     specifier: ^4.18.2
     version: 4.18.2
+  express-status-validate:
+    specifier: ^1.0.5
+    version: 1.0.5
   helmet:
     specifier: ^7.0.0
     version: 7.0.0
@@ -556,6 +559,16 @@ packages:
       split: 0.3.3
       stream-combiner: 0.0.4
       through: 2.3.8
+    dev: false
+
+  /express-status-validate@1.0.5:
+    resolution: {integrity: sha512-+pNEiTETNsnw3NjcgS6dRux7GTXDXPnx8kUdq8KjNdrZBx9XgBGfmbM6ZHh3aWS707B4tmRylfEvNStTviAVmA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@types/express': 4.17.17
+      express: 4.18.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /express@4.18.2:
