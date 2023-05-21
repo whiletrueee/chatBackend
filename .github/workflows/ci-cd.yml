@@ -34,7 +34,7 @@ jobs:
           chmod 700 /home/runner/chatbackend/.ssh
           cd /home/runner/chatbackend/.ssh
           echo "$PRIVATE_KEY" > id_rsa
-          chmod 640 test
+          chmod 640 id_rsa
           echo "Host $HOSTNAME" > config
           echo "  AddKeysToAgent yes" >> config
           echo "  ForwardAgent yes" >> config
