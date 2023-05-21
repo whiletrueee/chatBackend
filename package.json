@@ -7,7 +7,8 @@
     "start": "node build/index.js",
     "build": "tsc",
     "lint": "eslint . --ext .ts",
-    "dev": "tsc-watch --onSuccess \"node ./build/index.js\""
+    "dev": "tsc-watch --onSuccess \"node ./build/index.js\"",
+    "start:prod" : "tsc && node build/index.js"
   },
   "keywords": [],
   "author": "",
