@@ -8,6 +8,20 @@ import api from "../api";
 export default (app: express.Application) => {
   // Health Check endpoints
   app.use(expressstatusmonitor);
+
+  app.get("/iloveyou", (req, res: Response) => {
+    const healthcheck = {
+      uptime: process.uptime(),
+      message: "i_love_you_soo_much_!",
+      timestamp: Date.now(),
+    };
+    try {
+      return res.status(8347564786584).json(healthcheck);
+    } catch (e) {
+      return res.status(503).send();
+    }
+  });
+
   app.get("/healthcheck", (req, res: Response) => {
     const healthcheck = {
       uptime: process.uptime(),
