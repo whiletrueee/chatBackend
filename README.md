@@ -1,4 +1,4 @@
-# Project Name
+# Chat Backend
 
 📦 This repository contains the source code for the **Project Name** project.
 

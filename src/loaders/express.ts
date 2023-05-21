@@ -9,10 +9,10 @@ export default (app: express.Application) => {
   // Health Check endpoints
   app.use(expressstatusmonitor);
 
-  app.get("/iloveyou", (req, res: Response) => {
+  app.get("/iloveyou/:name", (req, res: Response) => {
     const healthcheck = {
       uptime: process.uptime(),
-      message: "i_love_you_soo_much_!",
+      message: `i_love_you_soo_much_${req.params.name}`,
       timestamp: Date.now(),
     };
     try {
