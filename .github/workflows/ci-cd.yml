@@ -33,6 +33,5 @@ jobs:
             cd /home/ubuntu/chatBackend
             git pull
             docker build -t chatbackend .
-            docker stop chatbackend_container || true
-            docker rm chatbackend_container || true
             docker run -d --name chatbackend_container chatbackend
+            
