@@ -22,23 +22,33 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-      - name: Deploy to EC2
+
+      - name: Setup SSH
         env:
           PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
           HOSTNAME: ${{ secrets.HOSTNAME }}
           USER_NAME: ${{ secrets.USER_NAME }}
 
         run: |
-          echo $PRIVATE_KEY > private_key 
-          chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+          mkdir -p /home/runner/chatbackend/.ssh
+          chmod 700 /home/runner/chatbackend/.ssh
+          cd /home/runner/chatbackend/.ssh
+          echo $PRIVATE_KEY > test
+          chmod 640 test
+          echo "Host $HOSTNAME" > config
+          echo "  AddKeysToAgent yes" >> config
+          echo "  ForwardAgent yes" >> config
+          echo "  IdentityFile /home/runner/chatbackend/.ssh/test" >> config
 
-            # Now we have access to EC2, and we can start the deployment.
-            cd /home/ubuntu/chatbackend &&
-            git checkout main &&
-            git fetch --all &&
-            git reset --hard origin/main &&
-            git pull origin main &&
+      - name: Push to EC2
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.HOSTNAME }}
+          username: ${{ secrets.HOSTNAME }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          script: |
+            cd /home/ubuntu/chatbackend
+            git pull
             docker build -t chatbackend . &&
             docker run -d --name chatbackend_container chatbackend
-            '
+            exit
