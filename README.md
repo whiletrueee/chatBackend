@@ -1,6 +1,6 @@
 # Chat Backend
 
-📦 This repository contains the source code for the **Project Name** project.
+📦 This repository contains the source code for the **Chat Backend** project.
 
 ## Project Description
 
