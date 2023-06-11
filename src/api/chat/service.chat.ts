@@ -1,16 +1,25 @@
-import { Document, InsertOneResult } from "mongodb";
 import { getDB } from "../../config/mongoDb";
 import { finalChatType } from "./model.chat";
 
-export const uploadChat = async (
-  chatBody: finalChatType
-): Promise<InsertOneResult<Document>> => {
-  const db = await getDB();
-  const ChatData = db.collection("ChatData");
-  chatBody.createdAt = new Date();
-  const result = await ChatData.insertOne(chatBody);
-  if (!result) {
-    throw { message: "Chat not saved", status: 500, success: false };
+export const sendChat = async (
+  chatBody: finalChatType,
+  token: string | undefined
+) => {
+  const users = (await getDB()).collection("users");
+  const validateUser = await users.findOne(
+    { userId: chatBody.from },
+    { projection: { token: 1, _id: 0 } }
+  );
+  if (!validateUser) {
+    throw { message: "invalid source of message", status: 403, success: false };
   }
-  return result;
+
+  if (token === validateUser?.token) {
+    const chatData = (await getDB()).collection("ChatData");
+    chatBody.createdAt = new Date();
+    const insertData = await chatData.insertOne(chatBody);
+    return insertData;
+  }
+
+  throw { message: "Session Timed Out", status: 440, success: false };
 };

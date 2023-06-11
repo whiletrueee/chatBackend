@@ -6,9 +6,10 @@ const validate = (schema: any) => {
     try {
       schema.parse(chat);
       next();
-    } catch (err) {
-      console.log("This is zod err");
-      next(err);
+    } catch (err: any) {
+      return res
+        .status(400)
+        .json({ errorType: err.name, error: err.issues, success: false });
     }
   };
 };
