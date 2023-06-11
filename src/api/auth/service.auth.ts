@@ -2,6 +2,7 @@ import config from "../../config";
 import { getDB } from "../../config/mongoDb";
 import { finalUserRegisterType, validateUserLoginType } from "./model.auth";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import jwt from "jsonwebtoken";
 
 export const register = async (body: finalUserRegisterType) => {
@@ -16,8 +17,7 @@ export const register = async (body: finalUserRegisterType) => {
   // create new user
   userData.createdAt = new Date();
   userData.updatedAt = new Date();
-  const count = await user.countDocuments();
-  userData.userId = `user${count + 1}`;
+  userData.userId = crypto.randomBytes(16).toString("hex");
   // insert user
   const result = await user.insertOne(userData);
   if (!result) {

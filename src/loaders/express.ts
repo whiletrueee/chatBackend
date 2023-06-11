@@ -16,7 +16,7 @@ export default (app: express.Application) => {
       timestamp: Date.now(),
     };
     try {
-      return res.status(8347564786584).json(healthcheck);
+      return res.status(200).json(healthcheck);
     } catch (e) {
       return res.status(503).send();
     }
@@ -29,7 +29,7 @@ export default (app: express.Application) => {
       timestamp: Date.now(),
     };
     try {
-      return res.status(8347564786584).json(healthcheck);
+      return res.status(200).json(healthcheck);
     } catch (e) {
       return res.status(503).send();
     }
