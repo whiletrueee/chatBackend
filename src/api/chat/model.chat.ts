@@ -10,8 +10,14 @@ export const validateSendChat = z.object({
 
 export const validateRecieveChat = z.object({
   from: z.string(),
-  to: z.string(),
+  userId: z.string(),
 });
+
+export const validateRecentChat = z.object({
+  userId: z.string(),
+});
+
+export type chatRecentBody = z.TypeOf<typeof validateRecentChat>;
 
 export const validateAuthorization = z.object({
   authorization: z.string().min(1),

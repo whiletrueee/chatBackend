@@ -37,9 +37,9 @@ export const register = async (body: finalUserRegisterType) => {
 };
 
 export const login = async (body: validateUserLoginType) => {
-  const user = (await getDB()).collection("users");
+  const users = (await getDB()).collection("users");
   const query = { email: body.email };
-  const getProfile = await user.findOne(query);
+  const getProfile = await users.findOne(query);
   if (!getProfile) {
     throw { message: "User not found", status: 404, success: false };
   }
@@ -57,24 +57,27 @@ export const login = async (body: validateUserLoginType) => {
     { expiresIn: "10d" }
   );
 
-  await user.updateOne(
+  await users.updateOne(
     { email: getProfile.email },
     { $set: { token, updatedAt: new Date() } }
   );
 
-  return { message: "Login successful", success: true, token };
+  return {
+    message: "Login successful",
+    success: true,
+    token,
+    userId: getProfile.userId,
+  };
 };
 
 export const getAllUsersList = async (body: validateUserLoginType) => {
   if (body.email === "admin@chatapp.com") {
     if (body.password === "231304") {
       const users = (await getDB()).collection("users");
-      const getUsers = await users.find({}).toArray();
-      const allUsersData = getUsers.map((item) => {
-        return { name: item.name, email: item.email };
-      });
-
-      return allUsersData;
+      const getUsers = await users
+        .find({}, { projection: { name: 1, email: 1, _id: 0 } })
+        .toArray();
+      return getUsers;
     } else {
       throw wrongPassword;
     }
