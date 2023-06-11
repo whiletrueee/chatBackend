@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import validate from "../../middlewares/validate";
 import { validateUserLogin, validateUserRegister } from "./model.auth";
-import { login, register } from "./service.auth";
+import { getAllUsersList, login, register } from "./service.auth";
 const router = Router();
 
 const registerController = async (req: Request, res: Response) => {
@@ -22,7 +22,17 @@ const loginController = async (req: Request, res: Response) => {
   }
 };
 
+const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const result = await getAllUsersList(req.body);
+    return res.status(200).json(result);
+  } catch (err: any) {
+    return res.status(err.status).json({ error: err.message, success: false });
+  }
+};
+
 router.post("/register", validate(validateUserRegister), registerController);
 router.post("/login", validate(validateUserLogin), loginController);
+router.get("/all-users", validate(validateUserLogin), getAllUsers);
 
 export default router;

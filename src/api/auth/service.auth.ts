@@ -1,6 +1,11 @@
 import config from "../../config";
 import { getDB } from "../../config/mongoDb";
-import { finalUserRegisterType, validateUserLoginType } from "./model.auth";
+import {
+  finalUserRegisterType,
+  validateUserLoginType,
+  wrongMail,
+  wrongPassword,
+} from "./model.auth";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
@@ -45,7 +50,7 @@ export const login = async (body: validateUserLoginType) => {
     getProfile.password
   );
   if (!isPasswordValid) {
-    throw { message: "Password is incorrect", status: 401, success: false };
+    throw wrongPassword;
   }
 
   const token = jwt.sign(
@@ -57,4 +62,25 @@ export const login = async (body: validateUserLoginType) => {
   await user.updateOne({ email: getProfile.email }, { $set: { token } });
 
   return { message: "Login successful", status: 200, success: true, token };
+};
+
+export const getAllUsersList = async (body: validateUserLoginType) => {
+  if (
+    body.mailORuserId === "admin" ||
+    body.mailORuserId === "admin@chatapp.com"
+  ) {
+    if (body.password === "231304") {
+      const users = (await getDB()).collection("users");
+      const getUsers = await users.find({}).toArray();
+      const allUsersData = getUsers.map((item) => {
+        return { name: item.name, email: item.email };
+      });
+
+      return allUsersData;
+    } else {
+      throw wrongPassword;
+    }
+  } else {
+    throw wrongMail;
+  }
 };

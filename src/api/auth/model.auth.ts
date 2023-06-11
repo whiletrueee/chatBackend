@@ -26,3 +26,15 @@ export const validateUserLogin = z.object({
 });
 
 export type validateUserLoginType = z.TypeOf<typeof validateUserLogin>;
+
+export const wrongPassword = {
+  message: "Password is incorrect",
+  status: 401,
+  success: false,
+};
+
+export const wrongMail = {
+  message: "E-Mail / user Id is incorrect",
+  status: 401,
+  success: false,
+};
