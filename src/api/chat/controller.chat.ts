@@ -5,9 +5,10 @@ import {
   validateAuthorization,
   validateSendChat,
   validateRecieveChat,
-  validateRecentChat,
+  validateParamRecentChat,
 } from "./model.chat";
 import authValidate from "../../middlewares/authValidate";
+import validateParam from "../../middlewares/validateParam";
 const router = Router();
 
 const sendChatController = async (req: Request, res: Response) => {
@@ -29,8 +30,9 @@ const recieveChatController = async (req: Request, res: Response) => {
 };
 
 const recentChatController = async (req: Request, res: Response) => {
+  const userId = req.query.userId as string;
   try {
-    const result = await recentChat(req.body, req.headers.authorization);
+    const result = await recentChat(userId, req.headers.authorization);
     return res.status(200).json(result);
   } catch (err: any) {
     return res.status(err.status).json({ error: err.message, success: false });
@@ -54,7 +56,7 @@ router.get(
 router.get(
   "/recent",
   authValidate(validateAuthorization),
-  validate(validateRecentChat),
+  validateParam(validateParamRecentChat),
   recentChatController
 );
 

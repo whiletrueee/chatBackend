@@ -55,13 +55,13 @@ export const recieveChat = async (
 };
 
 export const recentChat = async (
-  chatBody: chatRecentBody,
+  userId: string,
   token: string | undefined
 ) => {
   const getDatabase = await getDB();
   const users = getDatabase.collection("users");
   const validateUser = await users.findOne(
-    { userId: chatBody.userId },
+    { userId },
     { projection: { token: 1, _id: 0 } }
   );
   if (!validateUser) {
@@ -75,7 +75,7 @@ export const recentChat = async (
   if (token === validateUser?.token) {
     const chatData = getDatabase.collection("ChatData");
     const getRecentChats = await chatData
-      .find({ $or: [{ from: chatBody.userId }, { to: chatBody.userId }] })
+      .find({ $or: [{ from: userId }, { to: userId }] })
       .toArray();
     if (getRecentChats) {
       const sortedOrder = getRecentChats.sort((a, b) => {
