@@ -18,7 +18,7 @@ export const sendChat = async (
     const chatData = (await getDB()).collection("ChatData");
     chatBody.createdAt = new Date();
     const insertData = await chatData.insertOne(chatBody);
-    return insertData;
+    return {insertData, success: true, status: 200};
   }
 
   throw { message: "Session Timed Out", status: 440, success: false };
@@ -54,10 +54,8 @@ export const recieveChat = async (
   throw { message: "Session Timed Out", status: 440, success: false };
 };
 
-export const recentChat = async (
-  userId: string,
-  token: string | undefined
-) => {
+// incomplete function
+export const recentChat = async (userId: string, token: string | undefined) => {
   const getDatabase = await getDB();
   const users = getDatabase.collection("users");
   const validateUser = await users.findOne(
@@ -88,5 +86,72 @@ export const recentChat = async (
     }
   }
 
+  throw { message: "Session Timed Out", status: 440, success: false };
+};
+
+export const allUsers = async (userId: string, token: string | undefined) => {
+  const getDatabase = await getDB();
+  const users = getDatabase.collection("users");
+  const validateUser = await users.findOne(
+    { userId },
+    { projection: { token: 1, _id: 0 } }
+  );
+  if (!validateUser) {
+    throw {
+      message: "No user exist with provided userId",
+      status: 403,
+      success: false,
+    };
+  }
+
+  if (token === validateUser?.token) {
+    const allUsers = await users
+      .find({}, { projection: { name: 1, email: 1, userId: 1 } })
+      .toArray();
+
+    return allUsers.filter((user) => user.userId !== userId);
+  }
+  throw { message: "Session Timed Out", status: 440, success: false };
+};
+
+export const messages = async (
+  from: string,
+  to: string,
+  token: string | undefined
+) => {
+  const getDatabase = await getDB();
+  const users = getDatabase.collection("users");
+  const validateUser = await users.findOne(
+    { userId: from },
+    { projection: { token: 1, _id: 0 } }
+  );
+  if (!validateUser) {
+    throw {
+      message: "No user exist with provided userId",
+      status: 403,
+      success: false,
+    };
+  }
+
+  if (token === validateUser?.token) {
+    const chatData = getDatabase.collection("ChatData");
+    const getRecentChats = await chatData
+      .find({
+        $or: [
+          { from: from, to: to },
+          { from: to, to: from },
+        ],
+      })
+      .toArray();
+    if (getRecentChats) {
+      const sortedOrder = getRecentChats.sort((a, b) => {
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
+        return dateA.getTime() - dateB.getTime();
+      });
+
+      return sortedOrder;
+    }
+  }
   throw { message: "Session Timed Out", status: 440, success: false };
 };

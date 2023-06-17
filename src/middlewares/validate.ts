@@ -3,7 +3,6 @@ import { NextFunction, Request, Response } from "express";
 const validate = (schema: any) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const chat = req.body;
-    console.log(chat);
     try {
       schema.parse(chat);
       next();

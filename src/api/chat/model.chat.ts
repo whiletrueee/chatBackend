@@ -5,7 +5,7 @@ export const validateSendChat = z.object({
   message: z.string().min(1),
   from: z.string(),
   to: z.string(),
-  sentAt: z.string(),
+  sentAt: z.string().datetime(),
 });
 
 export const validateRecieveChat = z.object({
@@ -17,6 +17,12 @@ export const validateParamRecentChat = z.object({
   userId: z.string(),
 });
 
+export const validateParamMessages = z.object({
+  from: z.string(),
+  to: z.string(),
+});
+
+export type messages = z.TypeOf<typeof validateParamMessages>;
 export type chatRecentBody = z.TypeOf<typeof validateParamRecentChat>;
 
 export const validateAuthorization = z.object({

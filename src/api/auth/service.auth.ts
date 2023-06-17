@@ -67,6 +67,8 @@ export const login = async (body: validateUserLoginType) => {
     success: true,
     token,
     userId: getProfile.userId,
+    name: getProfile.name,
+    email: getProfile.email,
   };
 };
 
