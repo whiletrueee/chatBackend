@@ -1,7 +1,13 @@
 import config from "../../config";
 import { getDB } from "../../config/mongoDb";
-import { finalUserRegisterType, validateUserLoginType } from "./model.auth";
+import {
+  finalUserRegisterType,
+  validateUserLoginType,
+  wrongMail,
+  wrongPassword,
+} from "./model.auth";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import jwt from "jsonwebtoken";
 
 export const register = async (body: finalUserRegisterType) => {
@@ -16,8 +22,7 @@ export const register = async (body: finalUserRegisterType) => {
   // create new user
   userData.createdAt = new Date();
   userData.updatedAt = new Date();
-  const count = await user.countDocuments();
-  userData.userId = `user${count + 1}`;
+  userData.userId = crypto.randomBytes(16).toString("hex");
   // insert user
   const result = await user.insertOne(userData);
   if (!result) {
@@ -32,11 +37,9 @@ export const register = async (body: finalUserRegisterType) => {
 };
 
 export const login = async (body: validateUserLoginType) => {
-  const user = (await getDB()).collection("users");
-  const query = {
-    $or: [{ email: body.mailORuserId }, { userId: body.mailORuserId }],
-  };
-  const getProfile = await user.findOne(query);
+  const users = (await getDB()).collection("users");
+  const query = { email: body.email };
+  const getProfile = await users.findOne(query);
   if (!getProfile) {
     throw { message: "User not found", status: 404, success: false };
   }
@@ -45,7 +48,7 @@ export const login = async (body: validateUserLoginType) => {
     getProfile.password
   );
   if (!isPasswordValid) {
-    throw { message: "Password is incorrect", status: 401, success: false };
+    throw wrongPassword;
   }
 
   const token = jwt.sign(
@@ -54,7 +57,33 @@ export const login = async (body: validateUserLoginType) => {
     { expiresIn: "10d" }
   );
 
-  await user.updateOne({ email: getProfile.email }, { $set: { token } });
+  await users.updateOne(
+    { email: getProfile.email },
+    { $set: { token, updatedAt: new Date() } }
+  );
 
-  return { message: "Login successful", status: 200, success: true, token };
+  return {
+    message: "Login successful",
+    success: true,
+    token,
+    userId: getProfile.userId,
+    name: getProfile.name,
+    email: getProfile.email,
+  };
+};
+
+export const getAllUsersList = async (body: validateUserLoginType) => {
+  if (body.email === "admin@chatapp.com") {
+    if (body.password === "231304") {
+      const users = (await getDB()).collection("users");
+      const getUsers = await users
+        .find({}, { projection: { name: 1, email: 1, _id: 0 } })
+        .toArray();
+      return getUsers;
+    } else {
+      throw wrongPassword;
+    }
+  } else {
+    throw wrongMail;
+  }
 };

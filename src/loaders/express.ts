@@ -10,28 +10,34 @@ export default (app: express.Application) => {
   app.use(expressstatusmonitor);
 
   app.get("/iloveyou/:name", (req, res: Response) => {
-    const healthcheck = {
-      uptime: process.uptime(),
-      message: `i_love_you_soo_much_${req.params.name}`,
-      timestamp: Date.now(),
-    };
     try {
-      return res.status(8347564786584).json(healthcheck);
-    } catch (e) {
-      return res.status(503).send();
+      return res.status(200).send({
+        uptime: Math.floor(process.uptime()),
+        message: "I love you " + req.params.name + "!",
+        timestamp: new Date(),
+      });
+    } catch (e: any) {
+      return res.status(503).send({
+        uptime: Math.floor(process.uptime()),
+        message: e.message,
+        timestamp: new Date(),
+      });
     }
   });
 
   app.get("/healthcheck", (req, res: Response) => {
-    const healthcheck = {
-      uptime: process.uptime(),
-      message: "OK",
-      timestamp: Date.now(),
-    };
     try {
-      return res.status(8347564786584).json(healthcheck);
-    } catch (e) {
-      return res.status(503).send();
+      return res.status(200).send({
+        uptime: Math.floor(process.uptime()),
+        message: "Healthy",
+        timestamp: new Date(),
+      });
+    } catch (e: any) {
+      return res.status(503).send({
+        uptime: Math.floor(process.uptime()),
+        message: e.message,
+        timestamp: new Date(),
+      });
     }
   });
 

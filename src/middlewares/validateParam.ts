@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 
-const authLoginValidate = (schema: any) => {
+const validateParam = (schema: any) => {
   return (req: Request, res: Response, next: NextFunction) => {
+    const chat = req.query;
     try {
-      schema.parse({ authorization: req.headers.authorization });
+      schema.parse(chat);
       next();
     } catch (err: any) {
       return res
@@ -13,4 +14,4 @@ const authLoginValidate = (schema: any) => {
   };
 };
 
-export default authLoginValidate;
+export default validateParam;

@@ -8,7 +8,7 @@
     "build": "tsc",
     "lint": "eslint . --ext .ts",
     "dev": "tsc-watch --onSuccess \"node ./build/index.js\"",
-    "start:prod" : "tsc && node build/index.js"
+    "start:prod": "tsc && node build/index.js"
   },
   "keywords": [],
   "author": "",
@@ -32,8 +32,11 @@
     "express": "^4.18.2",
     "express-status-validate": "^1.0.5",
     "helmet": "^7.0.0",
+    "jsdom": "^22.1.0",
     "jsonwebtoken": "^9.0.0",
     "mongodb": "^5.5.0",
+    "node-fetch": "^3.3.1",
+    "socket.io": "^4.6.2",
     "tsc-watch": "^6.0.4",
     "zod": "^3.21.4"
   }
