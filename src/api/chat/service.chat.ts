@@ -1,3 +1,4 @@
+import { useSocket } from "../..";
 import { getDB } from "../../config/mongoDb";
 import { chatRecentBody, finalChatType } from "./model.chat";
 
@@ -18,72 +19,10 @@ export const sendChat = async (
     const chatData = (await getDB()).collection("ChatData");
     chatBody.createdAt = new Date();
     const insertData = await chatData.insertOne(chatBody);
+    
+    useSocket.emit("send-message", chatBody);
+
     return {insertData, success: true, status: 200};
-  }
-
-  throw { message: "Session Timed Out", status: 440, success: false };
-};
-
-export const recieveChat = async (
-  chatBody: finalChatType,
-  token: string | undefined
-) => {
-  const getDatabase = await getDB();
-  const users = getDatabase.collection("users");
-  const validateUser = await users.findOne(
-    { userId: chatBody.to },
-    { projection: { token: 1, _id: 0 } }
-  );
-  if (!validateUser) {
-    throw { message: "Invalid source of request", status: 403, success: false };
-  }
-
-  if (token === validateUser?.token) {
-    const chatData = getDatabase.collection("ChatData");
-    const getAllMessages = await chatData.find({ to: chatBody.to }).toArray();
-    if (getAllMessages) {
-      const sortedOrder = getAllMessages.sort((a, b) => {
-        const dateA = new Date(a.sentAt);
-        const dateB = new Date(b.sentAt);
-        return dateA.getTime() - dateB.getTime();
-      });
-      return sortedOrder;
-    }
-  }
-
-  throw { message: "Session Timed Out", status: 440, success: false };
-};
-
-// incomplete function
-export const recentChat = async (userId: string, token: string | undefined) => {
-  const getDatabase = await getDB();
-  const users = getDatabase.collection("users");
-  const validateUser = await users.findOne(
-    { userId },
-    { projection: { token: 1, _id: 0 } }
-  );
-  if (!validateUser) {
-    throw {
-      message: "No user exist with provided userId",
-      status: 403,
-      success: false,
-    };
-  }
-
-  if (token === validateUser?.token) {
-    const chatData = getDatabase.collection("ChatData");
-    const getRecentChats = await chatData
-      .find({ $or: [{ from: userId }, { to: userId }] })
-      .toArray();
-    if (getRecentChats) {
-      const sortedOrder = getRecentChats.sort((a, b) => {
-        const dateA = new Date(a.createdAt);
-        const dateB = new Date(b.createdAt);
-        return dateB.getTime() - dateA.getTime();
-      });
-
-      return sortedOrder;
-    }
   }
 
   throw { message: "Session Timed Out", status: 440, success: false };
@@ -114,7 +53,7 @@ export const allUsers = async (userId: string, token: string | undefined) => {
   throw { message: "Session Timed Out", status: 440, success: false };
 };
 
-export const messages = async (
+export const recieveChat = async (
   from: string,
   to: string,
   token: string | undefined
@@ -145,8 +84,8 @@ export const messages = async (
       .toArray();
     if (getRecentChats) {
       const sortedOrder = getRecentChats.sort((a, b) => {
-        const dateA = new Date(a.createdAt);
-        const dateB = new Date(b.createdAt);
+        const dateA = new Date(a.sentAt);
+        const dateB = new Date(b.sentAt);
         return dateA.getTime() - dateB.getTime();
       });
 

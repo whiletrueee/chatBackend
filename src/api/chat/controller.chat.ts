@@ -1,16 +1,9 @@
 import { Request, Response, Router } from "express";
 import validate from "../../middlewares/validate";
-import {
-  allUsers,
-  messages,
-  recentChat,
-  recieveChat,
-  sendChat,
-} from "./service.chat";
+import { allUsers, recieveChat, sendChat } from "./service.chat";
 import {
   validateAuthorization,
   validateSendChat,
-  validateRecieveChat,
   validateParamRecentChat,
   validateParamMessages,
 } from "./model.chat";
@@ -27,25 +20,6 @@ const sendChatController = async (req: Request, res: Response) => {
   }
 };
 
-const recieveChatController = async (req: Request, res: Response) => {
-  try {
-    const result = await recieveChat(req.body, req.headers.authorization);
-    return res.status(200).json(result);
-  } catch (err: any) {
-    return res.status(err.status).json({ error: err.message, success: false });
-  }
-};
-
-const recentChatController = async (req: Request, res: Response) => {
-  const userId = req.query.userId as string;
-  try {
-    const result = await recentChat(userId, req.headers.authorization);
-    return res.status(200).json(result);
-  } catch (err: any) {
-    return res.status(err.status).json({ error: err.message, success: false });
-  }
-};
-
 const allUsersController = async (req: Request, res: Response) => {
   const userId = req.query.userId as string;
   try {
@@ -56,10 +30,10 @@ const allUsersController = async (req: Request, res: Response) => {
   }
 };
 
-const messagesController = async (req: Request, res: Response) => {
+const recieveChatController = async (req: Request, res: Response) => {
   try {
     const { from, to } = req.query;
-    const result = await messages(
+    const result = await recieveChat(
       from as string,
       to as string,
       req.headers.authorization
@@ -78,17 +52,10 @@ router.post(
 );
 
 router.get(
-  "/recieve",
+  "/recieve-messages",
   authValidate(validateAuthorization),
-  validate(validateRecieveChat),
+  validateParam(validateParamMessages),
   recieveChatController
-);
-
-router.get(
-  "/recent",
-  authValidate(validateAuthorization),
-  validateParam(validateParamRecentChat),
-  recentChatController
 );
 
 router.get(
@@ -96,13 +63,6 @@ router.get(
   authValidate(validateAuthorization),
   validateParam(validateParamRecentChat),
   allUsersController
-);
-
-router.get(
-  "/messages",
-  authValidate(validateAuthorization),
-  validateParam(validateParamMessages),
-  messagesController
 );
 
 export default router;
